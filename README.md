@@ -2,6 +2,7 @@
 
 _Pure and reproducible_ packaging of binary distributed hugo.
 This overlay provides almost all versions of hugo.
+The repo is inspired by [rust-overlay](https://github.com/oxalica/rust-overlay).
 
 Features:
 

@@ -40,7 +40,10 @@ let
       }
     ) version-info
   ) files;
+  latest_version = lib.trim (lib.readFile ./versions/latest);
 in
 {
-  hugo-bin = packages;
+  hugo-bin = packages // {
+    latest = final.hugo-bin.${latest_version};
+  };
 }

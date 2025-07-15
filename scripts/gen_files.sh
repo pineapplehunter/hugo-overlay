@@ -21,3 +21,5 @@ for tag in $(tags); do
     python "$SCRIPT_DIR/extract_versions.py" "$tag" <(curl -L "$URL") "$OUT" || true
   fi
 done
+
+tags | head -n 1 > "$SCRIPT_DIR/../versions/latest"

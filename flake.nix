@@ -24,15 +24,16 @@
       overlays.default = import ./default.nix;
       packages = eachSystem (pkgs: {
         hugo = pkgs.hugo-bin.latest.default;
+        hugo_extended = pkgs.hugo-bin.latest.extended;
+        hugo_extended_withdeploy = pkgs.hugo-bin.latest.extended_withdeploy;
         default = pkgs.hugo-bin.latest.default;
       });
-      checks = eachSystem (pkgs: {
-        hugo = pkgs.hugo-bin.latest.default;
-      });
+      checks = eachSystem (pkgs: self.packages.${pkgs.system});
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = [ pkgs.hugo-bin.latest.default ];
         };
       });
+      legacyPackages = eachSystem lib.id;
     };
 }

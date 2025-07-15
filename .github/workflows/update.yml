@@ -33,8 +33,8 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add manifests
-        git commit -m "manifest: update"
+        git add versions
+        git commit -m "versions: update"
 
     - name: Push changes
       if: steps.commit.outcome == 'success'

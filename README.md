@@ -1,4 +1,5 @@
 # hugo-overlay
+[![CI](https://github.com/pineapplehunter/hugo-overlay/actions/workflows/ci.yml/badge.svg)](https://github.com/pineapplehunter/hugo-overlay/actions/workflows/ci.yml)
 
 _Pure and reproducible_ packaging of binary distributed hugo.
 This overlay provides almost all versions of hugo.

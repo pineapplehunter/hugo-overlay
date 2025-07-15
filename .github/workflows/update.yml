@@ -1,0 +1,43 @@
+name: update versions
+on:
+  schedule:
+    - cron: '0 0 * * *' # *-*-* 00:00:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-versions:
+    name: Update hugo versions
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v31
+
+    - name: Sync stable channel
+      timeout-minutes: 10
+      run: ./scripts/gen_files.sh
+
+    - name: Check and commit changes
+      id: commit
+      continue-on-error: true
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add manifests
+        git commit -m "manifest: update"
+
+    - name: Push changes
+      if: steps.commit.outcome == 'success'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+

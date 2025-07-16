@@ -32,6 +32,13 @@ let
         install -Dt $out/bin hugo
         runHook postInstall
       '';
+      doInstallCheck = true;
+      installCheckPhase = ''
+        runHook preInstallCheck
+        # check if it can print it's version
+        $out/bin/hugo version
+        runHook postInstallCheck
+      '';
       meta = {
         changelog = "https://github.com/gohugoio/hugo/releases/tag/v${version}";
         description = "Fast and modern static website engine";

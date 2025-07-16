@@ -24,6 +24,8 @@ let
           ;
       };
       sourceRoot = ".";
+      nativeBuildInputs = lib.optionals (kind != "default") [ final.autoPatchelfHook ];
+      buildInputs = lib.optionals (kind != "default") [ final.libgcc.lib ];
       dontBuild = true;
       installPhase = ''
         runHook preInstall

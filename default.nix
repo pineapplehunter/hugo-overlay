@@ -17,6 +17,7 @@ let
     final.stdenvNoCC.mkDerivation {
       pname = if kind == "default" then "hugo-bin" else "hugo-${kind}-bin";
       inherit version;
+
       src = final.fetchurl {
         inherit (per-system-info.${final.stdenv.hostPlatform.system} or (throw "unsupported system"))
           url
@@ -34,11 +35,13 @@ let
       ];
 
       dontBuild = true;
+
       installPhase = ''
         runHook preInstall
         install -Dt $out/bin hugo
         runHook postInstall
       '';
+
       doInstallCheck = true;
       installCheckPhase = ''
         runHook preInstallCheck
@@ -46,6 +49,7 @@ let
         $out/bin/hugo version
         runHook postInstallCheck
       '';
+
       meta = {
         changelog = "https://github.com/gohugoio/hugo/releases/tag/v${version}";
         description = "Fast and modern static website engine";

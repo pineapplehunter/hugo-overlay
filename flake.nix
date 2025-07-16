@@ -21,14 +21,32 @@
 
     in
     {
-      overlays.default = import ./default.nix;
-      packages = eachSystem (pkgs: {
+      overlays.default = import ./overlay.nix;
+      packages = eachSystem (
+        pkgs:
+        let
+          all-versions = lib.attrNames pkgs.hugo-bin;
+          all-hugo-versions = lib.listToAttrs (
+            map (v: {
+              name = "hugo_${lib.replaceString "." "_" (lib.toLower v)}";
+              value = pkgs.hugo-bin.${v}.default;
+            }) all-versions
+          );
+        in
+        {
+          hugo = pkgs.hugo-bin.latest.default;
+          hugo_extended = pkgs.hugo-bin.latest.extended;
+          hugo_extended_withdeploy = pkgs.hugo-bin.latest.extended_withdeploy;
+          default = pkgs.hugo-bin.latest.extended_withdeploy;
+        }
+        // all-hugo-versions
+      );
+      checks = eachSystem (pkgs: {
         hugo = pkgs.hugo-bin.latest.default;
         hugo_extended = pkgs.hugo-bin.latest.extended;
         hugo_extended_withdeploy = pkgs.hugo-bin.latest.extended_withdeploy;
-        default = pkgs.hugo-bin.latest.default;
+        default = pkgs.hugo-bin.latest.extended_withdeploy;
       });
-      checks = eachSystem (pkgs: self.packages.${pkgs.system});
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = [ pkgs.hugo-bin.latest.default ];

@@ -26,11 +26,11 @@ let
       };
       sourceRoot = ".";
 
-      nativeBuildInputs = lib.optionals (kind != "default") [
+      nativeBuildInputs = lib.optionals (final.stdenv.hostPlatform.isLinux && kind != "default") [
         final.autoPatchelfHook
       ];
 
-      buildInputs = lib.optionals (kind != "default" && final.stdenv.hostPlatform.isLinux) [
+      buildInputs = lib.optionals (final.stdenv.hostPlatform.isLinux && kind != "default") [
         final.libgcc.lib
       ];
 

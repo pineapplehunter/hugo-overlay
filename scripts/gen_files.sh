@@ -14,7 +14,10 @@ tags(){
 
 mkdir -p "$SCRIPT_DIR"/../versions
 
-for tag in $(tags); do
+TMP=$(mktemp)
+tags > $TMP
+
+cat $TMP | while read -r tag; do
   OUT="$SCRIPT_DIR/../versions/$tag.json"
   URL="https://github.com/gohugoio/hugo/releases/download/v$tag/hugo_$tag""_checksums.txt"
   if [ ! -f "$OUT" ]; then
@@ -22,4 +25,4 @@ for tag in $(tags); do
   fi
 done
 
-tags | head -n 1 > "$SCRIPT_DIR/../versions/latest"
+head -n 1 $TMP > "$SCRIPT_DIR/../versions/latest"

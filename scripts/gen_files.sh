@@ -16,6 +16,12 @@ mkdir -p "$SCRIPT_DIR"/../versions
 
 TMP=$(mktemp)
 
+
+cleanup(){
+  rm "$TMP"
+}
+trap cleanup EXIT
+
 tags > "$TMP"
 
 while read -r tag; do

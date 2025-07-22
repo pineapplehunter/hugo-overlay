@@ -15,14 +15,14 @@ tags(){
 mkdir -p "$SCRIPT_DIR"/../versions
 
 TMP=$(mktemp)
-tags > $TMP
 
-cat $TMP | while read -r tag; do
+tags > "$TMP"
+
+while read -r tag; do
   OUT="$SCRIPT_DIR/../versions/$tag.json"
+  [ -f "$OUT" ] && continue # skip version if file exists
   URL="https://github.com/gohugoio/hugo/releases/download/v$tag/hugo_$tag""_checksums.txt"
-  if [ ! -f "$OUT" ]; then
-    python "$SCRIPT_DIR/extract_versions.py" "$tag" <(curl -L "$URL") "$OUT" || true
-  fi
-done
+  python "$SCRIPT_DIR/extract_versions.py" "$tag" <(curl -L "$URL") "$OUT" || true
+done < "$TMP"
 
-head -n 1 $TMP > "$SCRIPT_DIR/../versions/latest"
+head -n 1 "$TMP" > "$SCRIPT_DIR/../versions/latest"

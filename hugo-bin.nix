@@ -4,6 +4,7 @@
   libgcc,
   autoPatchelfHook,
   fetchurl,
+  versionCheckHook,
 
   # custom
   version,
@@ -23,11 +24,14 @@ stdenvNoCC.mkDerivation {
   };
   sourceRoot = ".";
 
-  nativeBuildInputs = lib.optionals (stdenvNoCC.hostPlatform.isLinux && kind != "default") [
+  nativeBuildInputs = [
+    versionCheckHook
+  ]
+  ++ lib.optionals stdenvNoCC.hostPlatform.isLinux [
     autoPatchelfHook
   ];
 
-  buildInputs = lib.optionals (stdenvNoCC.hostPlatform.isLinux && kind != "default") [
+  buildInputs = lib.optionals stdenvNoCC.hostPlatform.isLinux [
     libgcc.lib
   ];
 
@@ -40,12 +44,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   doInstallCheck = true;
-  installCheckPhase = ''
-    runHook preInstallCheck
-    # check if it can print it's version
-    $out/bin/hugo version
-    runHook postInstallCheck
-  '';
+  versionCheckProgramArg = "version";
 
   meta = {
     changelog = "https://github.com/gohugoio/hugo/releases/tag/v${version}";

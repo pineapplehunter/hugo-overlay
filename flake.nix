@@ -27,10 +27,15 @@
         let
           all-versions = lib.attrNames pkgs.hugo-bin;
           all-hugo-versions = lib.listToAttrs (
-            map (v: {
-              name = "hugo_${lib.replaceString "." "_" (lib.toLower v)}";
-              value = pkgs.hugo-bin.${v}.default;
-            }) all-versions
+            lib.flatten (
+              map (
+                v:
+                map (kind: {
+                  name = "hugo_${lib.replaceString "." "_" (lib.toLower v)}_${kind}";
+                  value = pkgs.hugo-bin.${v}.${kind};
+                }) (lib.attrNames pkgs.hugo-bin.${v})
+              ) all-versions
+            )
           );
         in
         {

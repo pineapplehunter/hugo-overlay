@@ -11,29 +11,21 @@
   kind,
   per-system-info,
 }:
-
+let
+  inherit (lib) optionals;
+  platform-info = per-system-info.${stdenvNoCC.hostPlatform.system} or (throw "unsupported system");
+  # non default variants on linux need to link with shared library
+  needsPatching = kind != "default" && stdenvNoCC.hostPlatform.isLinux;
+in
 stdenvNoCC.mkDerivation {
   pname = "hugo-${kind}-bin";
   inherit version;
 
-  src = fetchurl {
-    inherit (per-system-info.${stdenvNoCC.hostPlatform.system} or (throw "unsupported system"))
-      url
-      hash
-      ;
-  };
+  src = fetchurl { inherit (platform-info) url hash; };
   sourceRoot = ".";
 
-  nativeBuildInputs = [
-    versionCheckHook
-  ]
-  ++ lib.optionals stdenvNoCC.hostPlatform.isLinux [
-    autoPatchelfHook
-  ];
-
-  buildInputs = lib.optionals stdenvNoCC.hostPlatform.isLinux [
-    libgcc.lib
-  ];
+  nativeBuildInputs = optionals needsPatching [ autoPatchelfHook ];
+  buildInputs = optionals needsPatching [ libgcc.lib ];
 
   dontBuild = true;
 
@@ -43,6 +35,7 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
 
+  nativeCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
   versionCheckProgramArg = "version";
 
@@ -52,9 +45,7 @@ stdenvNoCC.mkDerivation {
     homepage = "https://gohugo.io";
     license = lib.licenses.asl20;
     mainProgram = "hugo";
-    maintainers = with lib.maintainers; [
-      pineapplehunter
-    ];
+    maintainers = with lib.maintainers; [ pineapplehunter ];
     platforms = lib.attrNames per-system-info;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
   };

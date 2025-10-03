@@ -56,6 +56,13 @@
         default = pkgs.mkShell {
           packages = [ pkgs.hugo-bin.latest.default ];
         };
+        ci = pkgs.mkShell {
+          packages = with pkgs; [
+            curl
+            jq
+            python3
+          ];
+        };
       });
       legacyPackages = eachSystem lib.id;
     };

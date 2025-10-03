@@ -25,7 +25,12 @@ jobs:
 
     - name: Sync stable channel
       timeout-minutes: 10
-      run: ./scripts/gen_files.sh
+      run: ./scripts/gen_files.sh "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: build default
+      run: |
+        git add versions
+        nix build
 
     - name: Check and commit changes
       id: commit
@@ -33,7 +38,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add versions
         git commit -m "versions: update"
 
     - name: Push changes

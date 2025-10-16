@@ -1,4 +1,4 @@
-#! /usr/bin/env -S nix develop -i .#ci -c bash
+#!/usr/bin/env -S nix develop .#ci -c bash
 
 set -exuo pipefail
 
